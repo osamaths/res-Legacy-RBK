@@ -12,6 +12,10 @@ var bookSchema = mongoose.Schema({
   reviews:String,
   pages:Number,
   publisher:String
+  // read:Boolean,
+  // wantToRead:Boolean,
+  // reading:Boolean,
+  // favourite:Boolean
 });
 var books = mongoose.model('books', bookSchema);
 module.exports = books;
