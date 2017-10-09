@@ -2,9 +2,17 @@
 var bcrypt = require('bcrypt-nodejs');
 var Promise = require('bluebird');
 var mongoose = require('mongoose');
+var books=require('./books'); 
 var userSchema = mongoose.Schema({
   username: {type: String, index: {unique: true} },
   password: String,
+  // bookId:[
+  //     {type: Schema.Types.ObjectId, ref: 'books'}
+  //   ],
+  read:Array,
+  wantToRead:Array,
+  reading:Array,
+  favourite:Array
 })
 var users = mongoose.model('User', userSchema);
 //this for encrypt password data
