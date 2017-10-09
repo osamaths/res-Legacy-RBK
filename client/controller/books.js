@@ -27,7 +27,7 @@ angular.module('book-store',['angular.filter'])
     //this part to handle the filter of catogories 
     $scope.selected=[];
     $scope.geners=['Career & Study advice','Engineering','IT & Programming','Natural Sciences','others'];
-    
+    $scope.reads = ["read", "want to read", "reading", "favourite"];
     $scope.exist=function(index){
       var  gener=$scope.geners[index];
       var search = $('#search').val();

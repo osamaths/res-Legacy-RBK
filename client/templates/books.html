@@ -1,5 +1,6 @@
 
 
+
 <!-- design input search -->
 <section id='newsletter'>
 	<div class='container'>
@@ -71,6 +72,9 @@
 
 								<div class="col-sm-4 sidenav">
 									<img src={{'../image/'+$ctrl.activeBook.image}} style=" width:200px ;margin-top:20px ;border-style: solid ;border-width: 8px" />
+									<select style = "margin-top: 20px; margin-left:15px; width:80%; height:35px; font-weight:900">
+										<option ng-repeat="x in reads">{{x}}</option>
+									</select>
 									<p style='margin-top: 20px'><span style="font-weight:900 ;margin-left:20px " > RATING : </span>
 										<span><input type="radio" name="rating" id="str5" value="5"><label for="str5"></label></span>
 										<span><input type="radio" name="rating" id="str4" value="4"><label for="str4"></label></span>
