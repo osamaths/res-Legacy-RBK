@@ -146,8 +146,6 @@ app.post('/index',function(req,res){
 
   })
 })
-
-
 // app.post('/index',function(req,res){
 //   mongo.connect(url,function(err,db){
 //     assert.equal(null,err)
