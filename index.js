@@ -137,6 +137,30 @@ app.get('/init',function (req,res){
   })
 })
 
+
+app.post('/index',function(req,res){
+  mongo.connect(url,function(err,db){
+    db.update(
+      {_id:req.body.Id},
+      {$push:{listName:req.body.listName,bookId:req.body.Id }})
+
+  })
+})
+// app.post('/index',function(req,res){
+//   mongo.connect(url,function(err,db){
+//     assert.equal(null,err)
+//     db.collection('users').insertOne(
+//       [{listName:req.body.listName,bookId:req.body.Id}
+//        ]
+//        ,function(err,resalt){
+//     console.log('inserted');
+//     db.close();
+//   })
+//   })
+// })
+
+
+
 // books.create({title:'creating-your-cv-as-a-self-marketing-tool',
 //   gener:'Career & Study advice',
 
