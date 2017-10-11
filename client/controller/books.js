@@ -24,32 +24,34 @@ angular.module('book-store',['angular.filter'])
      }
    })
     }
-
-    this.list;
-    this.createList = function (){
+  
+    var that=this;
+   
+    this.createList = function (listName){
+      console.log ('------>', this.activeBook._id,listName)
       $.ajax({
        async: false, 
        data:{
-        id : this.activeBook._id ,
-        list:this.list
+        book_id : that.activeBook._id ,
+        listName:listName
       },
-      url: "/addToList",
-      type:'POST',
+      url: "/createList",
+      type:'PUT',
       dataType: 'json',
       success: function(result){
-       console.log($scope.$ctrl.list)
+       console.log(result)
      }
    })
 
     }
 
 
-    $scope.addToList = function(){
-     $scope.data = {
-      target: $scope.event.target.innerText,
-      id : $scope.activeBook._id
+    this.addToList = function(){
+     this.data = {
+      target: this.event.target.innerText,
+      id : this.activeBook._id
     }
-    $http.post("/read", $scope.data)
+    $http.put("/addToList", this.data)
     .then(function(response) {
       console.log("yeeeeeeeeeeeeeeeeeeeesssssssss");
     })
