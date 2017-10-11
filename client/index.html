@@ -7,6 +7,7 @@
 	<meta name="keywords" content="">
 	<meta name="author" content="">
 	<link rel="stylesheet" href="css/style.css">
+	<link rel="stylesheet" href="css/lists.css">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 	<script src="angular.min.js"></script>
 	<script	  src="https://code.jquery.com/jquery-3.2.1.js"
@@ -20,6 +21,9 @@
 
 	<script src="controller/books.js"></script>
 	<script src="controller/paid.js"></script>
+	<script src="controller/lists.js"></script>
+	<script src="controller/list.js"></script>
+	<script src="controller/bookList.js"></script>
 
 
 </head>
@@ -49,16 +53,16 @@
    	<section id='showcase'>
    	 <div class='container'>
    	 	<p> There Is NO Friend <br>
-   	 	                         As Loyal As a Book</p>
+   				As Loyal As a Book</p>
    	 </div>
    	</section>
     <!--middle-->
-     <div id='app'>
+     <div id='app' class="mainDiv">
    	 <div class="container1">
-   	 <books/>
+			 <lists></lists>
+   	 <!-- <books/> -->
      </div>
    	 </div>
-
 
    	<!-- footer -->
    	<footer>
