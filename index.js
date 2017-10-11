@@ -23,6 +23,11 @@ app.use(session({
   aveUnintinalized:true
 }));
 
+// app.get('/index2',function(req, res){
+//   res.redirect('/index2.html');
+// })
+
+
 app.get ('/', (req, res) => {
   console.log ('aaaaaaaaaaaaa')
   if ( !!req.session.username ){
@@ -32,7 +37,7 @@ app.get ('/', (req, res) => {
   }
 })
 
-app.get ('/index', (req, res) => {
+app.get ('/index2', (req, res) => {
   // console.log (req.session.username, '--------', !!req.session.username);
   if (!!req.session.username){
     res.redirect ('/index2.html');
@@ -207,8 +212,17 @@ app.put('/createList',function(req,res){
     )
 
   })
-// })
 
+app.get('/getLists',function(req,res){
+  var book= db.collection('users').findOne({username:req.body.username}, (err, user) => {
+    if(err)
+      console.log(err)
+    res.send(user.lists);
+  })
+    // res.redirect('/index')
+
+})
+// [{listName:req.body.listName,list:[req.body.book_id]}]
 // app.post('/index',function(req,res){
 //   mongo.connect(url,function(err,db){
 //     assert.equal(null,err)
