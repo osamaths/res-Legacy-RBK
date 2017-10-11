@@ -128,15 +128,16 @@ app.post('/login', function(req, res) {
 //end of user siginup and login handling
 
 app.get ('/logout', (req, res) => {
+  console.log(req.session.username, '<------------------');
   req.session.username = null;
-  redirect ('/login');
+  res.redirect ('/login');
 })
 
 //this part for search in google Api
 app.post('/search',function (req,res){
   books1.search( req.body.token, function(error, results) {
     //console.log(req.session)
-    if ( ! error ) {
+    if (!error) {
       res.json(results);
     } else {
       console.log(error);
@@ -168,21 +169,31 @@ app.get('/init',function (req,res){
   })
 })
 
-// app.post('/addToList',function(req,res){
-//   users.findOne({
-//     username: req.session.username
-//   }, (err, user) => {
-//     if (err) console.log (err);
+// {
+//   lists: [
+//     {
+//       listName:,
+//       list:[]
+//     }
+//   ]
+// }
 
-//     users.update({
-//       lists:
-//     })
-//   })
-// })
+app.put('/addToList', (req, res) => {
+  users.update({
+    username: req.session.username, "lists.listName": req.body.listName
+  }, {
+    "$push": {
+      "lists.$.list": req.body.book_id
+    }
+  }, (err, result) => {
+    if (err) res.send(err)
+    res.send(result); // response with update status
+  })
+})
 
 app.put('/createList',function(req,res){
   // mongo.connect(url,function(err,db){
-    console.log ('llllllllllllll')
+    console.log ('llllllllllllll', req.session.username, req.body.book_id, req.body.listName)
     users.update(
       {username:req.session.username},
       {$push:
