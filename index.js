@@ -212,49 +212,73 @@ app.put('/createList',function(req,res){
     )
 
   })
-
-app.get('/getLists',function(req,res){
+app.get ('/getLists', async (req, res) => {
   var lists = [];
   var listo = [];
-  var testo = 'kaka';
+  var user = await users.findOne({
+    username: req.session.username
+  });
 
-  var changeListo = (value) => {
-    listo.push(value);
-    // console.log(listo, '<--------------');
-  }
-  console.log('-------->>>', req.session.username);
-
-  var getListo = () => {
-    return listo;
-  }
-
-
-  users.findOne({
-    username: 'osama'
-  }, (err, user) => {
-    for (var i = 0; i < user.lists.length; i++){
-      var currentList = user.lists[i].list;
-      for (var j = 0; j < currentList.length; j++){
-        books.findOne({
-          _id: currentList[j]
-        }, (err, book) => {
-          changeListo (book);
-          console.log('=======>', book);
-          console.log('>>>>>>>>', listo)
-        })
-      }
-      var listName = user.lists[i].listName;
-      setTimeout(function(){
-        console.log('+_+_+_+_+>', testo, listo);
-        lists.push( {listName: listName, list: getListo()} )
-      }, 1000);
+  for (var i = 0; i < user.lists.length; i++){
+    var currentList = user.lists[i].list;
+    var listName = user.lists[i].listName;
+    listo = [];
+    for (var j = 0; j < currentList.length; j++){
+      var book = await books.findOne({
+        _id: currentList[j]
+      });
+      listo.push (book);
     }
-    setTimeout(function(){
-      console.log('<<<<<<^>>>>>>', lists);
-      res.send (lists);
-    }, 1500);
-  })
+    lists.push({listName: listName, list: listo});
+  }
+  res.send(lists);
 })
+// app.get('/getLists',function(req,res){
+//   var lists = [];
+//   var listo = [];
+//   var testo = 'kaka';
+//
+//   var changeListo = (value) => {
+//     listo.push(value);
+//     // console.log(listo, '<--------------');
+//   }
+//   var emptyListo = () => {
+//     listo = [];
+//   };
+//   console.log('-------->>>', req.session.username);
+//
+//   var getListo = () => {
+//     return listo;
+//   }
+//
+//
+//   users.findOne({
+//     username: 'osama'
+//   }, (err, user) => {
+//     for (var i = 0; i < user.lists.length; i++){
+//       var currentList = user.lists[i].list;
+//       emptyListo();
+//       for (var j = 0; j < currentList.length; j++){
+//         books.findOne({
+//           _id: currentList[j]
+//         }, (err, book) => {
+//           changeListo (book);
+//           console.log('=======>', book, '$$$$$$$$$', currentList);
+//           console.log('>>>>>>>>', listo)
+//         })
+//       }
+//       var listName = user.lists[i].listName;
+//       // setTimeout(function(){
+//         console.log('+_+_+_+_+>', testo, listo);
+//         lists.push( {listName: listName, list: getListo()} )
+//       // }, 1000);
+//     }
+//     setTimeout(function(){
+//       console.log('<<<<<<^>>>>>>', lists);
+//       res.send (lists);
+//     }, 1500);
+//   })
+// })
 // [{listName:req.body.listName,list:[req.body.book_id]}]
 // app.post('/index',function(req,res){
 //   mongo.connect(url,function(err,db){
