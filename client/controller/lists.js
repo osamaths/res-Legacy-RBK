@@ -20,8 +20,8 @@ angular.module('book-store')
         method: 'GET',
         url: '/getLists'
        }).then(function successCallback(response) {
-         console.log('++++++>', that.lists);
           that.lists = response.data;
+          console.log('++++++>', that.lists);
          }, function errorCallback(response) {
            console.log('----------> ', response.data);
          });
