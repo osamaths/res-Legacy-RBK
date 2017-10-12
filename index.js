@@ -9,6 +9,7 @@ var books=require('./database/model/books');
 var users=require('./database/model/users');
 var reviews=require('./database/model/reviews');
 var session=require('express-session'); 
+mongoose.Promise = require('bluebird');
 
 var app = express();
 app.use(bodyParser.json());
@@ -197,6 +198,38 @@ app.put('/createList',function(req,res){
     )
 
   })
+
+app.put('/getSelectedRating', function(req, res) {
+  console.log ('+++++++++++++')
+  var ratt = parseInt(req.body.rating);
+  console.log(req.body.rating)
+  console.log("00000000", ratt)
+
+    books.findById(req.body.id, function(err, book) {
+      if (err){
+        console.log("giting book by id error ------")
+          return res.send(err)
+      }
+
+      console.log('old data : ' , book.rating )
+      console.log(book.rating.rate ,book.rating.counter , ratt ,'/', (book.rating.counter + 1) )
+      
+      book.rating.rate = ((book.rating.rate * book.rating.counter) + ratt) / (book.rating.counter + 1);
+      book.rating.counter = book.rating.counter+1
+      console.log('new data : ' , book.rating);
+
+      book.save(function(err, book){
+        console.log ('+_+_+_+_+_>', book)
+        if (err) console.log(err)
+      res.send(201, book.rating.rate);
+      })
+  })   
+})
+
+
+
+
+
 // })
 
 // app.post('/index',function(req,res){
@@ -214,7 +247,7 @@ app.put('/createList',function(req,res){
 
 
 
-// books.create({title:'creating-your-cv-as-a-self-marketing-tool',
+// var allBooks = [{title:'creating-your-cv-as-a-self-marketing-tool',
 //   gener:'Career & Study advice',
 
 // description:"Whether you are just starting out on your career or are in employment, your job searching must have one tool before that journey starts and that is a professional CV.Your CV needs a creative and meaningful profile, clearly identifying your achievements and what you have to offer a potential employer through your personal skills and abilities.This book goes through a structured approach of how to tackle each key stage in order to bring your CV together, by carrying out a number of self analysis exercises.The benefits include increased confidence, self esteem and the belief that you will find the job you are looking for.",
@@ -554,7 +587,16 @@ app.put('/createList',function(req,res){
 //   rating : 0,
 //   reviews :'' ,
 //   pdf:'adolf-hitler-hourly-history.pdf',
-//   image:'adolf-hitler2.jpg'},function (err, small) {
+//   image:'adolf-hitler2.jpg'}];
+ 
+
+// for (var n = 0 ; n < allBooks.length ; n ++) {
+//   allBooks[n].rating = {rate: allBooks[n].rating , counter: 0}
+//   var book = new books (allBooks[n]);
+//   book.save();
+// }
+
+//,function (err, small) {
 //      if (err) return console.error(err);
 //   // saved!
 // }) 
