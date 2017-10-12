@@ -215,30 +215,22 @@ app.put('/createList',function(req,res){
 app.get ('/getLists', async (req, res) => {
   var lists = [];
   var listo = [];
-  // console.log('----------) before user');
   var user = await users.findOne({
     username: req.session.username
   });
-  // console.log('----------) after user',user.lists);
 
   for (var i = 0; i < user.lists.length; i++){
     var currentList = user.lists[i].list;
-    var listName = user.lists[0].listName;
-    // console.log(listName,"*****list name ****", currentList)
+    var listName = user.lists[i].listName;
     listo = [];
     for (var j = 0; j < currentList.length; j++){
-      // console.log('----------) before book', currentList[j]);
       var book = await books.findOne({
         _id: currentList[j]
       });
-
-      // console.log('----------) after book',book);
       listo.push (book);
     }
-console.log(listo, '//////////////////////////');
     lists.push({listName: listName, list: listo});
   }
-  // console.log('+++++++++@@@@>>>', listo);
   res.send(lists);
 })
 // app.get('/getLists',function(req,res){
