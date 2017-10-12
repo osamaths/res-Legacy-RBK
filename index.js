@@ -202,15 +202,24 @@ app.put('/createList',function(req,res){
 
   })
 
-app.get('/getLists',function(req,res){
-  var book= db.collection('users').findOne({username:req.body.username}, (err, user) => {
-    if(err)
-      console.log(err)
-    res.send(user.lists);
-  })
-    // res.redirect('/index')
+// app.get('/getLists',function(req,res){
+//   var book= db.collection('users').findOne({username:req.body.username}, (err, user) => {
+//     if(err)
+//       console.log(err)
+//     res.send(user.lists);
+//   })
+//     // res.redirect('/index')
 
-})
+// })
+
+// app.post('/remove',function(req,res){
+//   users.findOneDelete(
+//     for(i=0; i<users.list){}
+//     {},
+
+
+//     )
+// })
 // [{listName:req.body.listName,list:[req.body.book_id]}]
 // app.post('/index',function(req,res){
 //   mongo.connect(url,function(err,db){
