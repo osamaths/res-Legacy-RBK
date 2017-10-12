@@ -2,7 +2,7 @@ angular.module('book-store')
 
 .component('lists',{
   controller: function($scope, $http) {
-    this.lists;
+    this.lists = 'kaka';
   // {
   //   name: 'Favorite Books',
   //   list: [{
@@ -13,15 +13,17 @@ angular.module('book-store')
   // }
   console.log(this.lists, '-------------');
     // get all user's lists
+    var that = this;
     this.getLists = () => {
       console.log('lists ------------');
       $http({
         method: 'GET',
         url: '/getLists'
        }).then(function successCallback(response) {
-          $scope.lists = response;
+         console.log('++++++>', that.lists);
+          that.lists = response.data;
          }, function errorCallback(response) {
-           console.log(response);
+           console.log('----------> ', response.data);
          });
     }
   },
