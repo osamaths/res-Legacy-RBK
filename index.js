@@ -5,16 +5,15 @@ var mongoose =require ('mongoose');
 var db=require('./database/index');
 var books1 = require('google-books-search');
 var bodyParser = require('body-parser');
-var books=require('./database/model/books'); 
+var books=require('./database/model/books');
 var users=require('./database/model/users');
 var reviews=require('./database/model/reviews');
-var session=require('express-session'); 
-
+var session=require('express-session');
 var app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(__dirname+'/client'));
-var port=process.env.PORT ||1128;
+var port=process.env.PORT || 2525;
 
 //this part for user login & signup
 //intialize  user session
@@ -38,7 +37,7 @@ app.get ('/', (req, res) => {
   }
 })
 
-app.get ('/index2', (req, res) => {
+app.get ('/index', (req, res) => {
   // console.log (req.session.username, '--------', !!req.session.username);
   if (!!req.session.username){
     res.redirect ('/index2.html');
@@ -49,12 +48,12 @@ app.get ('/index2', (req, res) => {
 })
 
 //render the login page
-app.get('/login', 
+app.get('/login',
   function(req, res) {
     res.redirect('login.html');
   });
 //render the signup page
-app.get('/signup', 
+app.get('/signup',
   function(req, res) {
     res.redirect('/signup.html');
   });
@@ -62,16 +61,16 @@ app.get('/signup',
 app.post('/signup', function(req, res) {
   var username = req.body.username;
   var password = req.body.password;
-      //check if user is already exsist  
+      //check if user is already exsist
       users.findOne({ username: username })
       .exec(function(err, user) {
-        //if the user dosen't exsist 
+        //if the user dosen't exsist
         if (!user) {
           var newUser = new users({
             username: username,
             password: password
           });
-          //save the new user in the database 
+          //save the new user in the database
           newUser.save(function(err, newUser) {
             if (err) {
               res.send(500, err);
@@ -80,14 +79,14 @@ app.post('/signup', function(req, res) {
               createSession(req, res, newUser);
             }
           });
-        } 
+        }
         else {
           console.log('Account already exists');
           res.redirect('/signup.html');
-        } 
+        }
       });
     });
-//create the user session 
+//create the user session
 var createSession = function(req, res, newUser) {
   return req.session.regenerate(function() {
     console.log( req.session)
@@ -95,7 +94,7 @@ var createSession = function(req, res, newUser) {
     res.redirect('index2.html');
   });
 };
-//comparing the input password to the saved one in the database 
+//comparing the input password to the saved one in the database
 var comparePassword = function (attemptedPassword, callback) {
   bcrypt.compare(attemptedPassword, this.password, function(err, isMatch) {
     if(err) {
@@ -106,55 +105,57 @@ var comparePassword = function (attemptedPassword, callback) {
     }
   });
 }
-//handle the login post 
+//handle the login post
 app.post('/login', function(req, res) {
-  console.log ('++++++> ');
-  var username = req.body.username;
-  var password = req.body.password;
-  //check if the user in the database or not 
-  users.findOne({ username: username }, function(err, user) {
-   if (!user) {
-     res.redirect('/login');
-   } else {
-     // comparePassword(password, function(err, match) {
-     //  if (match) {
-        // users.createSession(req, res, user);
-        if (password === user.password){
-        req.session.username = user.username;
-        console.log ('----> ', req.session.username)
-        res.redirect ('/index2');
-      } else {
-        res.redirect('/login');
-      }
-    // });
-   }
+  console.log ('++++++>')
+ var username = req.body.username;
+ var password = req.body.password;
+    //check if the user in the database or not
+    users.findOne({ username: username }, function(err, user) {
+     if (!user) {
+       res.redirect('/login');
+     } else {
+       // comparePassword(password, function(err, match) {
+       //  if (match) {
+          // users.createSession(req, res, user);
+          if (password === user.password){
+          req.session.username = user.username;
+          console.log ('---->', req.session.username)
+          res.redirect ('/index');
+
+        } else {
+          res.redirect('/login');
+        }
+      // });
+     }
    })
   });
 //end of user siginup and login handling
 
 app.get ('/logout', (req, res) => {
+  console.log(req.session.username, '<------------------');
   req.session.username = null;
-  redirect ('/login');
+  res.redirect ('/login');
 })
 
 //this part for search in google Api
 app.post('/search',function (req,res){
   books1.search( req.body.token, function(error, results) {
     //console.log(req.session)
-    if ( ! error ) {
+    if (!error) {
       res.json(results);
     } else {
       console.log(error);
     }
   });
 })
-//this part is for comment storing and send all the comments to the client 
+//this part is for comment storing and send all the comments to the client
 app.post('/coment',function (req,res){
   review=new reviews({bookid:req.body.id,text:req.body.coment});
   review.save(function(err, result){
     if(err){
       res.status(500).send(err);
-    } 
+    }
   })
   reviews.find({bookid:req.body.id}).exec(function(err, data){
     if(err){
@@ -162,32 +163,42 @@ app.post('/coment',function (req,res){
     }else{
       res.json(data)
     }
-    
+
     })
   })
-//this get to send all the books data from the database to the client 
-//it will recived in index2.html page 
+//this get to send all the books data from the database to the client
+//it will recived in index2.html page
 app.get('/init',function (req,res){
   books.find({},function(err, result){
     res.json(result)
   })
 })
 
-// app.post('/addToList',function(req,res){
-//   users.findOne({
-//     username: req.session.username
-//   }, (err, user) => {
-//     if (err) console.log (err);
+// {
+//   lists: [
+//     {
+//       listName:,
+//       list:[]
+//     }
+//   ]
+// }
 
-//     users.update({
-//       lists: 
-//     })
-//   })
-// })
+app.put('/addToList', (req, res) => {
+  users.update({
+    username: req.session.username, "lists.listName": req.body.listName
+  }, {
+    "$push": {
+      "lists.$.list": req.body.book_id
+    }
+  }, (err, result) => {
+    if (err) res.send(err)
+    res.send(result); // response with update status
+  })
+})
 
 app.put('/createList',function(req,res){
   // mongo.connect(url,function(err,db){
-    console.log ('llllllllllllll')
+    console.log ('llllllllllllll', req.session.username, req.body.book_id, req.body.listName)
     users.update(
       {username:req.session.username},
       {$push:
@@ -201,6 +212,7 @@ app.put('/createList',function(req,res){
     )
 
   })
+
 
 // app.get('/getLists',function(req,res){
 //   var book= db.collection('users').findOne({username:req.body.username}, (err, user) => {
@@ -220,6 +232,50 @@ app.put('/createList',function(req,res){
 
 //     )
 // })
+
+app.get('/getLists',function(req,res){
+  var lists = [];
+  var listo = [];
+  var testo = 'kaka';
+
+  var changeListo = (value) => {
+    listo.push(value);
+    // console.log(listo, '<--------------');
+  }
+  console.log('-------->>>', req.session.username);
+
+  var getListo = () => {
+    return listo;
+  }
+
+
+  users.findOne({
+    username: req.session.username
+  }, (err, user) => {
+    for (var i = 0; i < user.lists.length; i++){
+      var currentList = user.lists[i].list;
+      for (var j = 0; j < currentList.length; j++){
+        books.findOne({
+          _id: currentList[j]
+        }, (err, book) => {
+          changeListo (book);
+          console.log('=======>', book);
+          console.log('>>>>>>>>', listo)
+        })
+      }
+      var listName = user.lists[i].listName;
+      setTimeout(function(){
+        console.log('+_+_+_+_+>', testo, listo);
+        lists.push( {listName: listName, list: getListo()} )
+      }, 1000);
+    }
+    setTimeout(function(){
+      console.log('<<<<<<^>>>>>>', lists);
+      res.send (lists);
+    }, 1500);
+  })
+})
+
 // [{listName:req.body.listName,list:[req.body.book_id]}]
 // app.post('/index',function(req,res){
 //   mongo.connect(url,function(err,db){
@@ -579,7 +635,7 @@ app.put('/createList',function(req,res){
 //   image:'adolf-hitler2.jpg'},function (err, small) {
 //      if (err) return console.error(err);
 //   // saved!
-// }) 
+// })
 // Book1.find({},function (err,result){
 //   if(err){
 //     console.log(err);
@@ -587,15 +643,12 @@ app.put('/createList',function(req,res){
 //     else {
 //       console.log(result)
 //     }
-  
+
 // });
   app.use(function(req, res){
        res.send(404);
    });
-//server creating 
+//server creating
 app.listen(port, function() {
   console.log(`listening on port ${port}`);
 });
-
-
-
