@@ -8,7 +8,13 @@ var bodyParser = require('body-parser');
 var books=require('./database/model/books');
 var users=require('./database/model/users');
 var reviews=require('./database/model/reviews');
+
+var session=require('express-session'); 
+mongoose.Promise = require('bluebird');
+
+
 var session=require('express-session');
+
 var app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -212,12 +218,50 @@ app.put('/createList',function(req,res){
     )
 
   })
+
+
+app.put('/getSelectedRating', function(req, res) {
+  console.log ('+++++++++++++')
+  var ratt = parseInt(req.body.rating);
+  console.log(req.body.rating)
+  console.log("00000000", ratt)
+
+    books.findById(req.body.id, function(err, book) {
+      if (err){
+        console.log("giting book by id error ------")
+          return res.send(err)
+      }
+
+      console.log('old data : ' , book.rating )
+      console.log(book.rating.rate ,book.rating.counter , ratt ,'/', (book.rating.counter + 1) )
+      
+      book.rating.rate = ((book.rating.rate * book.rating.counter) + ratt) / (book.rating.counter + 1);
+      book.rating.counter = book.rating.counter+1
+      console.log('new data : ' , book.rating);
+
+      book.save(function(err, book){
+        console.log ('+_+_+_+_+_>', book)
+        if (err) console.log(err)
+      res.send(201, book.rating.rate);
+      })
+  })   
+})
+
+
+
+
+
+// })
+
+
 app.get ('/getLists', async (req, res) => {
+
   var lists = [];
   var listo = [];
   var user = await users.findOne({
     username: req.session.username
   });
+
 
   for (var i = 0; i < user.lists.length; i++){
     var currentList = user.lists[i].list;
@@ -233,52 +277,7 @@ app.get ('/getLists', async (req, res) => {
   }
   res.send(lists);
 })
-// app.get('/getLists',function(req,res){
-//   var lists = [];
-//   var listo = [];
-//   var testo = 'kaka';
-//
-//   var changeListo = (value) => {
-//     listo.push(value);
-//     // console.log(listo, '<--------------');
-//   }
-//   var emptyListo = () => {
-//     listo = [];
-//   };
-//   console.log('-------->>>', req.session.username);
-//
-//   var getListo = () => {
-//     return listo;
-//   }
-//
-//
-//   users.findOne({
-//     username: 'osama'
-//   }, (err, user) => {
-//     for (var i = 0; i < user.lists.length; i++){
-//       var currentList = user.lists[i].list;
-//       emptyListo();
-//       for (var j = 0; j < currentList.length; j++){
-//         books.findOne({
-//           _id: currentList[j]
-//         }, (err, book) => {
-//           changeListo (book);
-//           console.log('=======>', book, '$$$$$$$$$', currentList);
-//           console.log('>>>>>>>>', listo)
-//         })
-//       }
-//       var listName = user.lists[i].listName;
-//       // setTimeout(function(){
-//         console.log('+_+_+_+_+>', testo, listo);
-//         lists.push( {listName: listName, list: getListo()} )
-//       // }, 1000);
-//     }
-//     setTimeout(function(){
-//       console.log('<<<<<<^>>>>>>', lists);
-//       res.send (lists);
-//     }, 1500);
-//   })
-// })
+
 // [{listName:req.body.listName,list:[req.body.book_id]}]
 // app.post('/index',function(req,res){
 //   mongo.connect(url,function(err,db){
@@ -295,7 +294,7 @@ app.get ('/getLists', async (req, res) => {
 
 
 
-// books.create({title:'creating-your-cv-as-a-self-marketing-tool',
+// var allBooks = [{title:'creating-your-cv-as-a-self-marketing-tool',
 //   gener:'Career & Study advice',
 
 // description:"Whether you are just starting out on your career or are in employment, your job searching must have one tool before that journey starts and that is a professional CV.Your CV needs a creative and meaningful profile, clearly identifying your achievements and what you have to offer a potential employer through your personal skills and abilities.This book goes through a structured approach of how to tackle each key stage in order to bring your CV together, by carrying out a number of self analysis exercises.The benefits include increased confidence, self esteem and the belief that you will find the job you are looking for.",
@@ -635,7 +634,16 @@ app.get ('/getLists', async (req, res) => {
 //   rating : 0,
 //   reviews :'' ,
 //   pdf:'adolf-hitler-hourly-history.pdf',
-//   image:'adolf-hitler2.jpg'},function (err, small) {
+//   image:'adolf-hitler2.jpg'}];
+ 
+
+// for (var n = 0 ; n < allBooks.length ; n ++) {
+//   allBooks[n].rating = {rate: allBooks[n].rating , counter: 0}
+//   var book = new books (allBooks[n]);
+//   book.save();
+// }
+
+//,function (err, small) {
 //      if (err) return console.error(err);
 //   // saved!
 // })
